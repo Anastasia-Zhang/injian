@@ -76,6 +76,7 @@ public class OrderController extends BaseController {
 
     }
 
+    //订单确认
     @RequestMapping(value = "confirmOrder",method = {RequestMethod.GET})
     @ResponseBody
     public CommonReturnType confirmOrder(@RequestParam(name = "orderIdList") String orderIdList) throws BusinessException {
