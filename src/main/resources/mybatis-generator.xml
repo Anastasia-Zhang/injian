@@ -58,6 +58,9 @@
         <!--<table  tableName="comment"   domainObjectName="CommentDO" enableCountByExample="false"-->
                 <!--enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
                 <!--selectByExampleQueryId="false"></table>-->
+        <!--<table  tableName="item_Category"   domainObjectName="CategoryDO" enableCountByExample="false"-->
+        <!--enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
+        <!--selectByExampleQueryId="false"></table>-->
 
 </context>
 </generatorConfiguration>

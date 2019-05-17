@@ -4,6 +4,7 @@ package com.injian.controller;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.injian.controller.viewobject.AddressVO;
 import com.injian.controller.viewobject.OrderVO;
 import com.injian.controller.viewobject.ShopCarProductVO;
 import com.injian.error.BusinessException;
@@ -46,7 +47,6 @@ public class OrderController extends BaseController {
         UserModel userModel = validateUserLogin();
         //下单
         OrderModel orderModel = orderService.createOrder(userModel.getId(),itemId,promoId,amount);
-
         return CommonReturnType.create(orderModel);
     }
 
@@ -77,7 +77,7 @@ public class OrderController extends BaseController {
     }
 
     //订单确认
-    @RequestMapping(value = "confirmOrder",method = {RequestMethod.GET})
+    @RequestMapping(value = "/confirmOrder",method = {RequestMethod.GET})
     @ResponseBody
     public CommonReturnType confirmOrder(@RequestParam(name = "orderIdList") String orderIdList) throws BusinessException {
         UserModel userModel = validateUserLogin();
@@ -90,7 +90,7 @@ public class OrderController extends BaseController {
 
     }
 
-    @RequestMapping(value = "orderAddress",method = {RequestMethod.POST},consumes = {CONTENT_TYPE_FORMED})
+    @RequestMapping(value = "/orderAddress",method = {RequestMethod.POST},consumes = {CONTENT_TYPE_FORMED})
     @ResponseBody
     public CommonReturnType orderAddress(@RequestParam(name = "addressId") Integer addressId,
                                          @RequestParam(name = "orderIdList")String orderList) throws BusinessException {
@@ -102,7 +102,7 @@ public class OrderController extends BaseController {
         return CommonReturnType.create(null);
     }
 
-    @RequestMapping(value = "showOrder",method = {RequestMethod.GET})
+    @RequestMapping(value = "/showOrder",method = {RequestMethod.GET})
     @ResponseBody
     public CommonReturnType showOrder() throws BusinessException {
         UserModel userModel = validateUserLogin();
@@ -111,13 +111,35 @@ public class OrderController extends BaseController {
         return CommonReturnType.create(orderVOList);
     }
 
-    @RequestMapping(value = "delOrder",method = {RequestMethod.POST},consumes = {CONTENT_TYPE_FORMED})
+    @RequestMapping(value = "/delOrder",method = {RequestMethod.POST},consumes = {CONTENT_TYPE_FORMED})
     @ResponseBody
     public CommonReturnType delOrder(@RequestParam(name = "orderId") String orderId) throws BusinessException {
         UserModel userModel = validateUserLogin();
         orderService.delOrder(orderId);
         return CommonReturnType.create(null);
     }
+
+    @RequestMapping(value = "/searchOrder",method = {RequestMethod.POST},consumes = {CONTENT_TYPE_FORMED})
+    @ResponseBody
+    public CommonReturnType searchOrder(@RequestParam(name = "keyword") String keyword,
+                                        @RequestParam(name = "orderStatus") Integer orderStatus,
+                                        @RequestParam(name = "orderId") String orderId ) throws BusinessException {
+        UserModel userModel = validateUserLogin();
+        List<OrderModel> searchOrderList = orderService.searchOrder(keyword,orderStatus,orderId,userModel.getId());
+        List<OrderVO> searchOrderVOList = this.convertVOListFromModel(searchOrderList);
+        return CommonReturnType.create(searchOrderVOList);
+    }
+
+    @RequestMapping(value = "/updateOrder",method = {RequestMethod.POST},consumes = {CONTENT_TYPE_FORMED})
+    @ResponseBody
+    public CommonReturnType updateOrder(@RequestParam(name = "orderId")String orderId) throws BusinessException {
+        //要更改的订单状态，如果要确认订单
+        //UserModel userModel = validateUserLogin();
+        orderService.updateOrderStatus(orderId,3);
+        return CommonReturnType.create(null);
+    }
+
+
 
 
     private ShopCarModel convertModelFromVO(ShopCarProductVO shopCarProductVO){
@@ -136,6 +158,11 @@ public class OrderController extends BaseController {
         OrderVO orderVO = new OrderVO();
         BeanUtils.copyProperties(orderModel,orderVO);
         orderVO.setOrderTime(orderModel.getOrderTime().toString(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")));
+        if(orderModel.getAddressModel() != null){
+            AddressVO addressVO = new AddressVO();
+            BeanUtils.copyProperties(orderModel.getAddressModel(),addressVO);
+            orderVO.setAddressVO(addressVO);
+        }
         return orderVO;
     }
 

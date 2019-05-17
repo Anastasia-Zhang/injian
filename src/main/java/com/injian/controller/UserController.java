@@ -90,7 +90,7 @@ public class UserController extends BaseController{
     public CommonReturnType getOtp(@RequestParam(name="telphone") String telphone) throws ClientException, BusinessException {
         //判断用户书否登录若登陆则需要判断手机号是否存在
         Boolean isLogin = (Boolean)httpServletRequest.getSession().getAttribute("IS_LOGIN");
-        if(isLogin){
+        if(isLogin != null && isLogin){
             userService.validateTelphone(telphone);
         }
         //生成短信验证码

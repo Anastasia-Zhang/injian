@@ -119,6 +119,12 @@
       order_status = #{orderStatus,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <update id="updateStatusByOrderId" parameterType="com.injian.dataobject.OrderAddressStatusDO">
+  update order_address_status
+  set order_status = #{orderStatus,jdbcType=INTEGER}
+  where order_id = #{orderId,jdbcType=INTEGER}
+</update>
   <delete id="deleteByOrderId" parameterType="java.lang.String">
     <!--
       WARNING - @mbg.generated

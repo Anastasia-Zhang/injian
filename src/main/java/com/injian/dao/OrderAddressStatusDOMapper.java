@@ -1,6 +1,7 @@
 package com.injian.dao;
 
 import com.injian.dataobject.OrderAddressStatusDO;
+import org.apache.ibatis.annotations.Param;
 
 public interface OrderAddressStatusDOMapper {
     /**
@@ -52,4 +53,5 @@ public interface OrderAddressStatusDOMapper {
     int updateByPrimaryKey(OrderAddressStatusDO record);
     int deleteByOrderId(String orderId);
     OrderAddressStatusDO selectByOrderId(String orderId);
+    int updateStatusByOrderId(@Param("orderId")String orderId, @Param("orderStatus") Integer orderStatus);
 }

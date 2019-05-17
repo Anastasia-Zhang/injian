@@ -63,7 +63,11 @@ public class ValidateServiceImpl implements ValidateService {
 
     @Override
     public void itemValidate(Integer itemId) throws BusinessException {
+        ItemModel itemModel = itemService.getItemById(itemId);
 
+        if (itemModel == null){
+            throw  new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR,"商品不存在");
+        }
     }
 
 

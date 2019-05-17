@@ -13,10 +13,7 @@ import com.injian.service.AddressService;
 import com.injian.service.ItemService;
 import com.injian.service.OrderService;
 import com.injian.service.ValidateService;
-import com.injian.service.model.AddressModel;
-import com.injian.service.model.ItemModel;
-import com.injian.service.model.OrderModel;
-import com.injian.service.model.ShopCarModel;
+import com.injian.service.model.*;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
@@ -62,7 +59,6 @@ public class OrderServiceImp implements OrderService {
         //校验下单状态，下单产品是否存在，用户是否合法，购买数量是否正确
         //验证
        validateService.userAndItemValidate(userId,itemId,promoId,amount);
-
         //落单减库存
         boolean result = itemService.decreaseStock(itemId,amount);
         if(!result){
@@ -79,24 +75,17 @@ public class OrderServiceImp implements OrderService {
         }else{
             orderModel.setItemPrice(itemModel.getPrice());
         }
-
         orderModel.setPromoId(promoId);
         //订单总价
         orderModel.setOrderPrice(orderModel.getItemPrice().multiply(new BigDecimal(amount)));
-
         //获取当前时间
         orderModel.setOrderTime(new DateTime());
-        System.out.println(new DateTime().toString());
-
         //生成及交易流水号
         orderModel.setId(generateOrderNo());
-
         OrderDO orderDO = convertFromOrderModel(orderModel);
         orderDOMapper.insertSelective(orderDO);
-
         //销量增加
         itemService.increaseSales(itemId,amount);
-
         //返回前端
         return orderModel;
     }
@@ -130,7 +119,6 @@ public class OrderServiceImp implements OrderService {
             OrderModel orderModel = this.convertFromOrderDO(orderDO,itemModel,null);
             orderModelConfrimList.add(orderModel);
         }
-
         return orderModelConfrimList;
     }
 
@@ -170,16 +158,12 @@ public class OrderServiceImp implements OrderService {
                }else{
                    orderModel = this.convertFromOrderDO(orderDO,itemModel,null);
                }
-
-
                return orderModel;
            }).collect(Collectors.toList());
            return orderModelList;
        }else{
            return null;
         }
-
-
     }
 
     @Override
@@ -191,6 +175,53 @@ public class OrderServiceImp implements OrderService {
         }
         addressStatusDOMapper.deleteByOrderId(orderId);
         orderDOMapper.deleteByPrimaryKey(orderId);
+    }
+
+    @Override
+    public List<OrderModel> searchOrder(String keyword, Integer orderStatus, String orderId,Integer userId) throws BusinessException {
+        List<OrderModel> userOrderList = this.getOrderByUserId(userId);
+        List<OrderModel> searchOrderList = new ArrayList<>();
+        for(OrderModel orderModel : userOrderList){
+            if(!orderId.equals("")){
+                if(orderModel.getId().equals(orderId)){
+                    searchOrderList.add(orderModel);
+                    break;
+                }
+            }else if(keyword.equals("") && orderStatus !=null){
+                if(orderModel.getOrderStatus() != null && orderModel.getOrderStatus().intValue() == orderStatus.intValue()){
+                    searchOrderList.add(orderModel);
+                }
+            }else if(!keyword.equals("") && orderStatus == null){
+                if( orderModel.getItemName().contains(keyword)){
+                    searchOrderList.add(orderModel);
+                }
+            }else if(!keyword.equals("") && orderStatus != null){
+                if(orderModel.getOrderStatus() != null
+                    && orderModel.getOrderStatus().intValue() == orderStatus.intValue()
+                    && orderModel.getItemName().contains(keyword)){
+                        searchOrderList.add(orderModel);
+                }
+            }else{
+                searchOrderList.add(orderModel);
+            }
+        }
+        return searchOrderList;
+    }
+
+    @Override
+    @Transactional
+    public void updateOrderStatus(String orderId, Integer orderStatus) throws BusinessException {
+        //校验订单是否存在
+        OrderDO orderDO = orderDOMapper.selectByPrimaryKey(orderId);
+        //校验订单是否选址
+        OrderAddressStatusDO orderAddressStatusDO = addressStatusDOMapper.selectByOrderId(orderId);
+        if(orderDO == null){
+            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR,"该订单不存在");
+        }else if(orderAddressStatusDO == null){
+            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR,"该订单地址信息不正确");
+        }
+        orderAddressStatusDO.setOrderStatus(orderStatus);
+        addressStatusDOMapper.updateStatusByOrderId(orderId,orderStatus);
     }
 
 
@@ -215,8 +246,10 @@ public class OrderServiceImp implements OrderService {
         orderModel.setItemPrice(new BigDecimal(orderDO.getItemPrice()));
         orderModel.setOrderPrice(new BigDecimal(orderDO.getOrderPrice()));
         orderModel.setOrderTime(new DateTime(orderDO.getOrderTime()));
-        orderModel.setImgUrl(itemModel.getImgUrl());
-        orderModel.setItemName(itemModel.getTitle());
+        if(itemModel != null){
+            orderModel.setImgUrl(itemModel.getImgUrl());
+            orderModel.setItemName(itemModel.getTitle());
+        }
         if(orderAddressStatusDO != null){
             orderModel.setAddressId(orderAddressStatusDO.getOrderAddressId());
             orderModel.setOrderStatus(orderAddressStatusDO.getOrderStatus());

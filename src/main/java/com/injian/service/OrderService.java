@@ -23,5 +23,9 @@ public interface OrderService {
     List<OrderModel> getOrderByUserId(Integer userId) throws BusinessException;
     //删除订单
     void delOrder(String orderId) throws BusinessException;
+    //订单查询
+    List<OrderModel> searchOrder(String keyword,Integer orderStatus,String orderId,Integer userId) throws BusinessException;
+    //确认收货/更改订单状态
+    void updateOrderStatus(String orderId,Integer orderStatus) throws BusinessException;
 
 }
