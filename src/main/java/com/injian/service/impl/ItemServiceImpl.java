@@ -17,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,19 +71,16 @@ public class ItemServiceImpl implements ItemService {
         ItemDO itemDO = this.convertItemDOFromItemModel(itemModel);
         //写入数据库
         itemDOMapper.insertSelective(itemDO);
-
-
         itemModel.setId(itemDO.getId());
         ItemStockDO itemStockDO = this.convertItemStockDOFromItemModel(itemModel);
         itemStockDOMapper.insertSelective(itemStockDO);
         //返回创建的对象
-
         return this.getItemById(itemModel.getId());
     }
 
-    @Override//查询所有的商品信息，也可以按照销量排序
-    public List<ItemModel> listItem() {
-        List<ItemDO> itemDOList = itemDOMapper.listItem();
+    @Override//查询所有的商品信息，按照销量排序
+    public List<ItemModel> listItem(Integer categoryId) {
+        List<ItemDO> itemDOList = itemDOMapper.listItem(categoryId);
         return this.convertModelListFromDO(itemDOList);
     }
 
@@ -101,15 +100,12 @@ public class ItemServiceImpl implements ItemService {
         ItemStockDO itemStockDO = itemStockDOMapper.selectByItemId(itemDO.getId());
         //将dataobject转化为model
         ItemModel itemModel = convertModelFromDataObject(itemDO,itemStockDO);
-
-
         //看商品是否有活动并获得商品活动信息
         PromoModel promoModel = promoService.getPromoByItemId(itemModel.getId());
         //活动存在并且状态是未开始或者进行中的，设置秒杀活动在商品信息上
         if (promoModel != null && promoModel.getStatus().intValue()!=3){
             itemModel.setPromoModel(promoModel);
         }
-
         return itemModel;
     }
 
@@ -132,6 +128,18 @@ public class ItemServiceImpl implements ItemService {
         itemDOMapper. increaseSales(itemId,amount);
     }
 
+    @Override
+    public List<ItemModel> promoItem() {
+      List<ItemModel> promoItemList = new ArrayList<>();
+      List<ItemModel> itemList = this.listItem(null);
+      for(ItemModel itemModel : itemList){
+          if(itemModel.getPromoModel() != null){
+              promoItemList.add(itemModel);
+          }
+      }
+      return promoItemList;
+    }
+
     private ItemModel convertModelFromDataObject(ItemDO itemDO,ItemStockDO itemStockDO)
     {
         ItemModel itemModel = new ItemModel();
@@ -143,8 +151,13 @@ public class ItemServiceImpl implements ItemService {
 
     private List<ItemModel> convertModelListFromDO(List<ItemDO> itemDOList){
         List<ItemModel> itemModelList = itemDOList.stream().map(itemDO -> {
-            ItemStockDO itemStockDO = itemStockDOMapper.selectByItemId(itemDO.getId());
-            ItemModel itemModel = this.convertModelFromDataObject(itemDO,itemStockDO);
+//            ItemStockDO itemStockDO = itemStockDOMapper.selectByItemId(itemDO.getId());
+//            ItemModel itemModel = this.convertModelFromDataObject(itemDO,itemStockDO);
+//            PromoModel promoModel = promoService.getPromoByItemId(itemDO.getId());
+//            if (promoModel != null && promoModel.getStatus().intValue()!=3){
+//                itemModel.setPromoModel(promoModel);
+//            }
+            ItemModel itemModel = this.getItemById(itemDO.getId());
             return itemModel;
         }).collect(Collectors.toList());
         return itemModelList;

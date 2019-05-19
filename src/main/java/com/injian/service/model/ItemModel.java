@@ -23,7 +23,6 @@ public class ItemModel {
     private String imgUrl;//描述图片url
     @NotNull(message = "种类不能为空")
     private Integer categoryId;
-
     //使用聚合模型，若promoModel不为空，则表示其拥有还未结束的秒杀活动
     private PromoModel promoModel;
 

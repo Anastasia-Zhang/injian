@@ -61,22 +61,29 @@ public class ItemController extends BaseController {
     //商品列表浏览页面
     @RequestMapping(value = "/list",method = {RequestMethod.GET})
     @ResponseBody
-    public CommonReturnType listItem(){
-        List<ItemModel> itemModelList = itemService.listItem();
+    public CommonReturnType listItem(@RequestParam(name = "categoryId") Integer categoryId){
+        List<ItemModel> itemModelList = itemService.listItem(categoryId);
         //将List内的model转化成itemVO并放进一个list里面
         List<ItemVO> itemVOList = this.convertVOListFromModel(itemModelList);
-
         return CommonReturnType.create(itemVOList);
     }
-
+    //搜索商品
     @RequestMapping(value = "/search",method = {RequestMethod.GET})
     @ResponseBody
     public CommonReturnType searchItem(@RequestParam(name = "keyWord")String keyWord){
         List<ItemModel> itemModelList = itemService.searchItem(keyWord);
         List<ItemVO> itemVOList = this.convertVOListFromModel(itemModelList);
-
         return CommonReturnType.create(itemVOList);
     }
+    //活动商品
+    @RequestMapping(value = "/promo",method = {RequestMethod.GET})
+    @ResponseBody
+    public CommonReturnType promoItem(){
+        List<ItemModel> itemModelList = itemService.promoItem();
+        List<ItemVO> itemVOList = this.convertVOListFromModel(itemModelList);
+        return CommonReturnType.create(itemVOList);
+    }
+
 
 
 

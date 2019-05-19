@@ -174,12 +174,16 @@
     </if>
   </select>
 
-  <select id="listItem"  resultMap="BaseResultMap">
+  <select id="listItem"  resultMap="BaseResultMap" parameterType="java.lang.Integer">
     select
     <include refid="Base_Column_List" />
-    from item order by sales DESC
+    from item
+    where 1=1
+    <if test="categoryId != null and categoryId !=''">
+      <bind name="pattern" value="categoryId + '%'" ></bind>
+      and  category_id LIKE #{pattern}
+    </if>
+    order by sales DESC
   </select>
-
-
 
 </mapper>

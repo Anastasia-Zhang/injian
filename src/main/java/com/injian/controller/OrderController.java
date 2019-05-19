@@ -63,7 +63,6 @@ public class OrderController extends BaseController {
         //使用jackson将json转为List
         JavaType jt = mapper.getTypeFactory().constructParametricType(List.class, ShopCarProductVO.class);
         List<ShopCarProductVO> VOList =  mapper.readValue(orderItemList, jt);
-
         //将VO转成Model
         List<ShopCarModel> shopCarModelList = VOList.stream().map(shopCarProductVO -> {
             ShopCarModel shopCarModel = this.convertModelFromVO(shopCarProductVO);
@@ -133,8 +132,7 @@ public class OrderController extends BaseController {
     @RequestMapping(value = "/updateOrder",method = {RequestMethod.POST},consumes = {CONTENT_TYPE_FORMED})
     @ResponseBody
     public CommonReturnType updateOrder(@RequestParam(name = "orderId")String orderId) throws BusinessException {
-        //要更改的订单状态，如果要确认订单
-        //UserModel userModel = validateUserLogin();
+        UserModel userModel = validateUserLogin();
         orderService.updateOrderStatus(orderId,3);
         return CommonReturnType.create(null);
     }

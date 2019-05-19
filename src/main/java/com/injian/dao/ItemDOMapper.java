@@ -55,7 +55,8 @@ public interface ItemDOMapper {
      * @mbg.generated Mon May 06 16:38:11 CST 2019
      */
     int updateByPrimaryKey(ItemDO record);
-    List<ItemDO> listItem();
+    List<ItemDO> listItem(@Param("categoryId") Integer categoryId);
     List<ItemDO> selectByKeyword(@Param("keyword")String keyword);
+    List<ItemDO> promoItem();
     int increaseSales(@Param("id")Integer id,@Param("amount") Integer amount);
 }

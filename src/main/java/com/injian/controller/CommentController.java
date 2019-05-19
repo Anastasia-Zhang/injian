@@ -19,6 +19,7 @@ public class CommentController extends BaseController{
     @RequestMapping(value = "/listComment",method = {RequestMethod.GET})
     @ResponseBody
     public CommonReturnType commentList(@RequestParam(name = "itemId") Integer itemId) throws BusinessException {
+
         return CommonReturnType.create(commentService.listItemComments(itemId));
     }
 
