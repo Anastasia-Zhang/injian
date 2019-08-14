@@ -2,6 +2,7 @@ package com.injian.controller;
 
 import com.aliyuncs.exceptions.ClientException;
 import com.injian.controller.viewobject.UserVO;
+import com.injian.dataobject.UserDO;
 import com.injian.error.BusinessException;
 import com.injian.error.EmBusinessError;
 import com.injian.response.CommonReturnType;
@@ -81,17 +82,33 @@ public class UserController extends BaseController{
 
         userModel.setEncrptpassword(this.EncodeByMD5(password));//将密码进行加密
         userService.register(userModel);
-        return CommonReturnType.create(null);
+        this.httpServletRequest.getSession().setAttribute("IS_LOGIN",true);
+        this.httpServletRequest.getSession().setAttribute("LOGIN_USER",userModel);
+        return CommonReturnType.create(userModel);
     }
 
     //用户获取otp短信接口
     @RequestMapping(value = "/getotp",method = {RequestMethod.POST},consumes = {CONTENT_TYPE_FORMED})
     @ResponseBody
-    public CommonReturnType getOtp(@RequestParam(name="telphone") String telphone) throws ClientException, BusinessException {
+    public CommonReturnType getOtp(@RequestParam(name="telphone") String telphone
+                                    ) throws ClientException, BusinessException {
         //判断用户书否登录若登陆则需要判断手机号是否存在
+
         Boolean isLogin = (Boolean)httpServletRequest.getSession().getAttribute("IS_LOGIN");
-        if(isLogin != null && isLogin){
-            userService.validateTelphone(telphone);
+        //登录状态,判定用户手机号码是否与所输入的手机号码一致
+
+        //未登录状态新用户注册
+        if(isLogin == null || !isLogin.booleanValue()){
+                boolean isRegistered =  userService.validateTelphone(telphone);
+                if(isRegistered){
+                    throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR,"手机号已存在");
+                }
+        }else{
+            if(isLogin){ UserModel userModel = (UserModel) httpServletRequest.getSession().getAttribute("LOGIN_USER");
+                if(!telphone.equals(userModel.getTelphone())){
+                    throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR,"手机号不正确");
+                }
+            }
         }
         //生成短信验证码
         StringBuffer stringBuffer=new StringBuffer();
@@ -141,7 +158,7 @@ public class UserController extends BaseController{
     }
 
     //修改个人信息
-    @RequestMapping("/update")
+    @RequestMapping(value = "/update",method = {RequestMethod.POST},consumes = {CONTENT_TYPE_FORMED})
     @ResponseBody
     public CommonReturnType updateInfo(@RequestParam(name="name")String name,
                                        @RequestParam(name="gender")String gender,
@@ -153,11 +170,11 @@ public class UserController extends BaseController{
         }
         if( !String.valueOf(userModel.getGender()).equals(gender)){
             userModel.setGender(new Byte(gender));
-            if(gender.equals("0")){
-                userModel.setImgUrl(DEFAULT_USER_IMG_PATH_F);
-            }else {
-                userModel.setImgUrl(DEFAULT_USER_IMG_PATH_M);
-            }
+//            if(gender.equals("0")){
+//                userModel.setImgUrl(DEFAULT_USER_IMG_PATH_F);
+//            }else {
+//                userModel.setImgUrl(DEFAULT_USER_IMG_PATH_M);
+//            }
         }
         if( !userModel.getEmail().equals(email)){
             userModel.setEmail(email);
@@ -195,16 +212,16 @@ public class UserController extends BaseController{
                 fileName = UUID.randomUUID()+suffixName;
                 if (FileUtils.upload(file,DEFAULT_USER_IMG_PATH,fileName)) {
                     //文件存放的相对路径(一般存放在数据库用于img标签的src)
-                    String relativePath="img/"+fileName;
+                    String relativePath="img/upload/"+fileName;
                     String realPath = DEFAULT_USER_IMG_PATH + "\\" + fileName;
                     //数据库上传
                     //查询用户原有头像url在项目文件夹中删除
                     String oldPath = userService.getUserById(userModel.getId()).getImgUrl();
-                    String oldImgName = oldPath.substring(DEFAULT_USER_IMG_PATH.length()+1);
+                    String oldImgName = oldPath.substring(11);
                     System.out.println(oldImgName);
                     FileUtils.delete(oldPath);
-                    userService.updateImg(userModel.getId(),realPath);
-                    userModel.setImgUrl(realPath);
+                    userService.updateImg(userModel.getId(),relativePath);
+                    userModel.setImgUrl(relativePath);
                     //userModel更新
                     this.httpServletRequest.getSession().setAttribute("LOGIN_USER",userModel);
                 }
@@ -219,11 +236,21 @@ public class UserController extends BaseController{
     }
 
     //修改密码&忘记密码
-    @RequestMapping("/password")
+    @RequestMapping(value = "/password",method = {RequestMethod.POST})
     @ResponseBody
     public CommonReturnType updatePassword(@RequestParam("password") String password) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
         UserModel userModel = validateUserLogin();
         userService.updatePassword(userModel.getId(),this.EncodeByMD5(password));
+        return CommonReturnType.create(null);
+    }
+
+    //登出
+    @RequestMapping(value = "/logout",method = {RequestMethod.POST})
+    @ResponseBody
+    @CrossOrigin(allowCredentials = "true",allowedHeaders = "*")
+    public CommonReturnType logout(){
+        this.httpServletRequest.getSession().setAttribute("IS_LOGIN",false);
+        this.httpServletRequest.getSession().removeAttribute("LOGIN_USER");
         return CommonReturnType.create(null);
     }
 

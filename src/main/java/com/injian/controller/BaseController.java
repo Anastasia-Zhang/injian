@@ -21,9 +21,11 @@ public class BaseController {
     private HttpServletRequest httpServletRequest;
 
     public static final String CONTENT_TYPE_FORMED = "application/x-www-form-urlencoded";
-    public static final String DEFAULT_USER_IMG_PATH_F="F:\\ProgramCoding\\IntellJJavaCode\\injian\\src\\main\\resources\\upload\\defaultF.jpg";
-    public static final String DEFAULT_USER_IMG_PATH_M="F:\\ProgramCoding\\IntellJJavaCode\\injian\\src\\main\\resources\\upload\\defaultM.jpg";
-    public static final String DEFAULT_USER_IMG_PATH="F:\\ProgramCoding\\IntellJJavaCode\\injian\\src\\main\\resources\\upload";
+    public static final String DEFAULT_USER_IMG_PATH_F="img/upload/defaultF.jpg";
+    public static final String DEFAULT_USER_IMG_PATH_M="img/upload/defaultM.jpg";
+    //public static final String DEFAULT_USER_IMG_PATH="F:\\ProgramCoding\\IntellJJavaCode\\injian\\src\\main\\resources\\upload";
+
+    public static final String DEFAULT_USER_IMG_PATH="D:/Work/毕业设计/InJianWebsite/img/upload";
 
     //定义exceptionhandler解决未被controller层吸收的异常
     // controller层是链接view层最后的一层，若发生在该层的的异常没有没处理，那么对于用户体验并不是很好

@@ -18,6 +18,7 @@ public enum EmBusinessError implements CommonError {
     SHOPCAR_IS_EMPTY(40002,"用户购物车为空"),
     //50000为订单相关错误
     OREDER_NOT_EXIST(50001,"订单不存在"),
+    ORDER_ADDRESS_EXIST(50002,"订单地址已存在"),
     //60000为评论错误
     COMMENT_IS_NULL(60001,"评论不能为空"),
 

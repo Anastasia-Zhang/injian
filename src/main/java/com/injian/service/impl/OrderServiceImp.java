@@ -131,10 +131,14 @@ public class OrderServiceImp implements OrderService {
         }
         String [] spString = orderIdList.split("\\s+");
         for(String orderId : spString){
+            OrderAddressStatusDO orderAddressStatusDOReturn = addressStatusDOMapper.selectByOrderId(orderId);
+            if(orderAddressStatusDOReturn != null){
+                throw new BusinessException(EmBusinessError.ORDER_ADDRESS_EXIST);
+            }
             OrderAddressStatusDO orderAddressStatusDO = new OrderAddressStatusDO();
             orderAddressStatusDO.setOrderId(orderId);
             orderAddressStatusDO.setOrderAddressId(addressId);
-            orderAddressStatusDO.setOrderStatus(0);//未支付订单
+            orderAddressStatusDO.setOrderStatus(1);//未支付订单/待发货订单
             addressStatusDOMapper.insertSelective(orderAddressStatusDO);
         }
 

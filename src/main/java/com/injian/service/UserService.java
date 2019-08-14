@@ -1,5 +1,6 @@
 package com.injian.service;
 
+import com.injian.dataobject.UserDO;
 import com.injian.error.BusinessException;
 import com.injian.service.model.UserModel;
 
@@ -15,5 +16,5 @@ public interface UserService {
     void updateImg(Integer userId,String path) throws BusinessException;
     //更新密码
     void updatePassword(Integer userId,String encrptPassword) throws BusinessException;
-    void validateTelphone(String telphone) throws BusinessException;
+    boolean validateTelphone(String telphone) throws BusinessException;
 }

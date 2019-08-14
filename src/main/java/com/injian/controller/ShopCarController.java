@@ -81,7 +81,6 @@ public class ShopCarController extends BaseController{
             return shopCarProductVO;
         }).collect(Collectors.toList());
         shopCarListVO.setShopCarProductVoLists(shopCarProductVOList);
-
         return CommonReturnType.create(shopCarListVO);
     }
 

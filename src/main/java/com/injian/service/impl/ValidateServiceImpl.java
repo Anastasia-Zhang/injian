@@ -34,7 +34,7 @@ public class ValidateServiceImpl implements ValidateService {
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR,"用户不存在");
         }
         if (amount <= 0 || amount >itemModel.getStock()){
-            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR,"数量信息不正确");
+            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR,"商品数量超过库存");
         }
         //校验活动信息
         if(promoId != null && promoId !=0 ){
@@ -42,10 +42,10 @@ public class ValidateServiceImpl implements ValidateService {
             if (promoId.intValue() !=itemModel.getPromoModel().getId() ){
                 throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR,"活动信息不正确");
             }
-            //2.校验活动是否正在进行中
-            else if(itemModel.getPromoModel().getStatus() != 2){
-                throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR,"活动信息不正确,活动还没开始");
-            }
+//            //2.校验活动是否正在进行中
+//            else if(itemModel.getPromoModel().getStatus() != 2){
+//                throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR,"活动信息不正确,活动还没开始");
+//            }
         }
     }
 

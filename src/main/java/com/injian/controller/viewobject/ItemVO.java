@@ -15,7 +15,15 @@ public class ItemVO {
     private BigDecimal promoPrice;
     private Integer promoId;
     private String startDate;
+    private Integer categoryId;
 
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
+    }
 
     public Integer getPromoStatus() {
         return promoStatus;

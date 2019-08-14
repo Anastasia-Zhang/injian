@@ -133,10 +133,12 @@ public class UserServiceImpl implements UserService {
 
     }
     @Override
-    public void validateTelphone(String telphone) throws BusinessException {
+    public boolean validateTelphone(String telphone) throws BusinessException {
         UserDO userDO = userDOMapper.selectByTelphone(telphone);
         if(userDO == null){
-            throw new BusinessException(EmBusinessError.USER_LOGIN_FAILED,"手机号不存在");
+            return false;
+        }else{
+            return true;
         }
     }
 

@@ -124,16 +124,18 @@ public class OrderController extends BaseController {
                                         @RequestParam(name = "orderStatus") Integer orderStatus,
                                         @RequestParam(name = "orderId") String orderId ) throws BusinessException {
         UserModel userModel = validateUserLogin();
-        List<OrderModel> searchOrderList = orderService.searchOrder(keyword,orderStatus,orderId,userModel.getId());
+        String newOrderId = orderId.trim();//去掉首尾空格
+        List<OrderModel> searchOrderList = orderService.searchOrder(keyword,orderStatus,newOrderId,userModel.getId());
         List<OrderVO> searchOrderVOList = this.convertVOListFromModel(searchOrderList);
         return CommonReturnType.create(searchOrderVOList);
     }
 
     @RequestMapping(value = "/updateOrder",method = {RequestMethod.POST},consumes = {CONTENT_TYPE_FORMED})
     @ResponseBody
-    public CommonReturnType updateOrder(@RequestParam(name = "orderId")String orderId) throws BusinessException {
+    public CommonReturnType updateOrder(@RequestParam(name = "orderId")String orderId,
+                                        @RequestParam(name = "orderStatus")Integer orderStatus) throws BusinessException {
         UserModel userModel = validateUserLogin();
-        orderService.updateOrderStatus(orderId,3);
+        orderService.updateOrderStatus(orderId,orderStatus);
         return CommonReturnType.create(null);
     }
 

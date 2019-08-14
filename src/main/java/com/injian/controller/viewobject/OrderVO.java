@@ -33,13 +33,23 @@ public class OrderVO {
     //总金额若promoId非空则表示秒杀商品价格
     private BigDecimal orderPrice;
 
-    //订单状态,0代表付款，1待发货,2待收货，3代表待评价，4代表已经完成
+    //订单状态,1待发货,2待收货，3代表待评价
     private Integer orderStatus;
+
+    private Integer addressId;
 
     private AddressVO addressVO;
 
     public AddressVO getAddressVO() {
         return addressVO;
+    }
+
+    public Integer getAddressId() {
+        return addressId;
+    }
+
+    public void setAddressId(Integer addressId) {
+        this.addressId = addressId;
     }
 
     public void setAddressVO(AddressVO addressVO) {

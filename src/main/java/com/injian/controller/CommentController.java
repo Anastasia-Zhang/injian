@@ -1,14 +1,20 @@
 package com.injian.controller;
 
+import com.injian.controller.viewobject.CommentVO;
 import com.injian.error.BusinessException;
 import com.injian.response.CommonReturnType;
 import com.injian.service.CommentService;
 import com.injian.service.model.CommentModel;
 import com.injian.service.model.UserModel;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller("comment")
 @RequestMapping("/comment")
@@ -19,15 +25,20 @@ public class CommentController extends BaseController{
     @RequestMapping(value = "/listComment",method = {RequestMethod.GET})
     @ResponseBody
     public CommonReturnType commentList(@RequestParam(name = "itemId") Integer itemId) throws BusinessException {
-
-        return CommonReturnType.create(commentService.listItemComments(itemId));
+        List<CommentModel> commentModelList = commentService.listItemComments(itemId);
+        List<CommentVO> commentVOList = this.convertListFromModelList(commentModelList);
+        return CommonReturnType.create(commentVOList);
     }
 
     @RequestMapping(value = "/listReply",method = {RequestMethod.GET})
     @ResponseBody
     public CommonReturnType replyList(@RequestParam(name = "itemId") Integer itemId,
                                       @RequestParam(name = "commentId") Integer commentId) throws BusinessException {
-        return CommonReturnType.create(commentService.getReply(itemId,commentId));
+
+
+        List<CommentModel> commentModelList = commentService.getReply(itemId,commentId);
+        List<CommentVO> commentVOList = this.convertListFromModelList(commentModelList);
+        return CommonReturnType.create(commentVOList);
     }
 
     @RequestMapping(value = "/addComments",method = {RequestMethod.POST},consumes = {CONTENT_TYPE_FORMED})
@@ -44,5 +55,40 @@ public class CommentController extends BaseController{
         commentModel.setCreateTime(new DateTime());
         commentService.addComment(commentModel);
         return CommonReturnType.create(null);
+    }
+    @RequestMapping(value = "/addReply",method = {RequestMethod.POST},consumes = {CONTENT_TYPE_FORMED})
+    @ResponseBody
+    public CommonReturnType addReply(@RequestParam(name = "itemId") Integer itemId,
+                                       @RequestParam(name = "content") String content,
+                                       @RequestParam(name = "parentId") Integer parentId,
+                                       @RequestParam(name = "toUserId") Integer toUserId) throws BusinessException {
+        UserModel userModel = validateUserLogin();
+        CommentModel commentModel = new CommentModel();
+        commentModel.setFromUserId(userModel.getId());
+        commentModel.setToUserId(toUserId);
+        commentModel.setParentId(parentId);
+        commentModel.setContent(content);
+        commentModel.setItemId(itemId);
+        commentModel.setCreateTime(new DateTime());
+        commentService.addComment(commentModel);
+        return CommonReturnType.create(null);
+    }
+
+    private CommentVO convertFromModel(CommentModel commentModel){
+        if(commentModel == null){
+            return null;
+        }
+        CommentVO commentVO = new CommentVO();
+        BeanUtils.copyProperties(commentModel,commentVO);
+        commentVO.setCreateTime(commentModel.getCreateTime().toString(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")));
+        return commentVO;
+    }
+
+    private List<CommentVO> convertListFromModelList(List<CommentModel> commentModelList){
+        List<CommentVO> commentVOList = commentModelList.stream().map(commentModel -> {
+            CommentVO commentVO = this.convertFromModel(commentModel);
+            return commentVO;
+        }).collect(Collectors.toList());
+        return commentVOList;
     }
 }
