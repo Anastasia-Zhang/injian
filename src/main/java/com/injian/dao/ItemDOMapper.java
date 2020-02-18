@@ -58,5 +58,6 @@ public interface ItemDOMapper {
     List<ItemDO> listItem(@Param("categoryId") Integer categoryId);
     List<ItemDO> selectByKeyword(@Param("keyword")String keyword);
     List<ItemDO> promoItem();
+
     int increaseSales(@Param("id")Integer id,@Param("amount") Integer amount);
 }
