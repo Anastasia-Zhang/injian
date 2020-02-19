@@ -24,5 +24,4 @@ public class CategoryController {
         return CommonReturnType.create(categoryModel);
     }
 
-
 }
