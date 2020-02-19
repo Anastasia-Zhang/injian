@@ -21,6 +21,7 @@ public class ActivityController {
 
 
     //注入BaseActivityService子类的service,key为子类service的key
+
     @Autowired
     private Map<String, BaseActivityService> activityServiceMap;
 
