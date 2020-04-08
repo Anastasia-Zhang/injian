@@ -23,4 +23,5 @@ public class CategoryController {
         CategoryModel categoryModel = categoryService.getCategoryList();
         return CommonReturnType.create(categoryModel);
     }
+
 }

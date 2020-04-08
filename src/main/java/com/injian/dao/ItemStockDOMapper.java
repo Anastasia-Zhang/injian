@@ -53,6 +53,7 @@ public interface ItemStockDOMapper {
      * @mbg.generated Mon May 06 16:38:11 CST 2019
      */
     int updateByPrimaryKey(ItemStockDO record);
+    // 查找
     ItemStockDO selectByItemId(Integer itemId);
     int decreaseStock(@Param("itemId")Integer id, @Param("amount") Integer amount);
 }

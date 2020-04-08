@@ -21,7 +21,7 @@ public class SwaggerConfig {
     }
 
     private ApiInfo apiInfo() {
-        return new ApiInfoBuilder().title("InJian RESTful API文档").description("")
+        return new ApiInfoBuilder().title("InJian RESTful API 文档").description("")
                 .version("1.0").build();
     }
 }
