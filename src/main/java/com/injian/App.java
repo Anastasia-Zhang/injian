@@ -24,11 +24,12 @@ public class App
 
     @RequestMapping("/injian")
     public String home(){
-        UserDO userDO = userDOMapper.selectByPrimaryKey(1);
-        if (userDO == null){
-            return "用户对象不存在";
-        }else
-            return userDO.getUsername();
+        return "hello welcome";
+        //UserDO userDO = userDOMapper.selectByPrimaryKey(1);
+//        if (userDO == null){
+//            return "用户对象不存在";
+//        }else
+//            return userDO.getUsername();
     }
 
 
