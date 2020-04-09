@@ -9,6 +9,10 @@ import com.injian.response.CommonReturnType;
 import com.injian.service.ShopCarService;
 import com.injian.service.model.ShopCarModel;
 import com.injian.service.model.UserModel;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Api(tags = {"购物车接口"})
 @Controller("shopCar")
 @RequestMapping("/shopCar")
 @CrossOrigin(origins = {"*"},allowCredentials = "true")
@@ -27,7 +32,12 @@ public class ShopCarController extends BaseController{
 
 
 
-
+    @ApiOperation(value = "添加购物车")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "商品Id", name = "itemId", dataType = "Integer"),
+            @ApiImplicitParam(value = "促销Id", name = "promoId", dataType = "Integer"),
+            @ApiImplicitParam(value = "商品数量", name = "amount", dataType = "Integer")
+    })
     @RequestMapping(value = "/addShopCar",method = {RequestMethod.POST},consumes = {CONTENT_TYPE_FORMED})
     @ResponseBody
     public CommonReturnType createOrder(@RequestParam(name = "itemId")Integer itemId,
@@ -42,6 +52,7 @@ public class ShopCarController extends BaseController{
     }
 
     //修改商品数量
+    @ApiOperation(value = "更新购物车")
     @RequestMapping(value = "/updateShopCarItemAmount",method = {RequestMethod.POST},consumes = {CONTENT_TYPE_FORMED})
     @ResponseBody
     @CrossOrigin(origins = {"*"},allowCredentials = "true")
@@ -56,6 +67,7 @@ public class ShopCarController extends BaseController{
     }
 
     //删除购物车单个商品
+    @ApiOperation(value = "删除购物车商品")
     @RequestMapping(value = "/delShopCarItem",method = {RequestMethod.POST},consumes = {CONTENT_TYPE_FORMED})
     @ResponseBody
     @CrossOrigin(origins = {"*"},allowCredentials = "true")
@@ -68,7 +80,7 @@ public class ShopCarController extends BaseController{
         return CommonReturnType.create(null);
     }
 
-
+    @ApiOperation(value = "查看用户购物车")
     @RequestMapping(value = "/userShopCarlist",method = {RequestMethod.GET})
     @ResponseBody
     public CommonReturnType getShopCarList() throws BusinessException {

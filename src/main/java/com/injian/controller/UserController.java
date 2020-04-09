@@ -10,6 +10,10 @@ import com.injian.service.UserService;
 import com.injian.service.model.UserModel;
 import com.injian.util.SendSms;
 import com.injian.util.FileUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.BeanUtils;
@@ -28,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-
+@Api(tags = {"用户接口"})
 @Controller("user")
 @RequestMapping("/user")
 @CrossOrigin(allowCredentials = "true",allowedHeaders = "*")//实现ajex跨域请求,但是没有办法做到session共享
@@ -41,6 +45,11 @@ public class UserController extends BaseController{
 
 
     //用户登录
+    @ApiOperation(value = "登录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "电话", name = "telphone", dataType = "String"),
+            @ApiImplicitParam(value = "密码", name = "password", dataType = "String"),
+    })
     @RequestMapping(value = "/login",method = {RequestMethod.POST},consumes = {CONTENT_TYPE_FORMED})
     @ResponseBody
     public CommonReturnType login(@RequestParam(name = "telphone") String telphone,
@@ -60,6 +69,14 @@ public class UserController extends BaseController{
     }
 
     //用户注册接口
+    @ApiOperation(value = "注册")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "电话", name = "telphone", dataType = "String"),
+            @ApiImplicitParam(value = "姓名", name = "name", dataType = "String"),
+            @ApiImplicitParam(value = "性别", name = "gender", dataType = "String"),
+            @ApiImplicitParam(value = "邮件", name = "email", dataType = "String"),
+            @ApiImplicitParam(value = "密码", name = "password", dataType = "String")
+    })
     @RequestMapping(value = "/register",method = {RequestMethod.POST},consumes = {CONTENT_TYPE_FORMED})
     @ResponseBody
     public CommonReturnType register(@RequestParam(name="telphone") String telphone,
@@ -128,7 +145,7 @@ public class UserController extends BaseController{
     //短信确认
     @RequestMapping(value = "/confirmotp",method = {RequestMethod.POST},consumes = {CONTENT_TYPE_FORMED})
     @ResponseBody
-    public CommonReturnType confirmOtp(@RequestParam(name="otpCode") String otpCode,
+    public CommonReturnType confirmOtp(@RequestParam(name = "otpCode") String otpCode,
                                        @RequestParam(name = "telphone") String telphone )throws BusinessException {
         //输入短信验证码确认
         String inSessionOtpCode = String.valueOf(httpServletRequest.getSession().getAttribute(telphone)) ;
@@ -141,7 +158,7 @@ public class UserController extends BaseController{
     }
 
 
-    @RequestMapping("/get")
+    @RequestMapping(value = "/get", method = {RequestMethod.GET})
     @ResponseBody
     public CommonReturnType getUser() throws BusinessException {
         //判断用户是否登录且拿到用户相关信息
@@ -187,7 +204,7 @@ public class UserController extends BaseController{
     }
 
     //上传图片
-    @RequestMapping("/imageUpload")
+    @RequestMapping(value = "/imageUpload", method = {RequestMethod.POST})
     @ResponseBody
     public CommonReturnType uploadImg(@RequestParam("fileName") MultipartFile file) throws BusinessException, IOException {
         UserModel userModel = validateUserLogin();

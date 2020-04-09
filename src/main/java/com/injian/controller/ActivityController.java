@@ -3,6 +3,9 @@ package com.injian.controller;
 import com.injian.controller.viewobject.ActivityVO;
 import com.injian.service.ActivityTypeEnum;
 import com.injian.service.BaseActivityService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +18,7 @@ import java.util.Map;
  * @date 2020/2/19 14:29
  */
 @Controller("activity")
+@Api(tags = {"活动接口"})
 @RequestMapping("/activity")
 @CrossOrigin(origins = {"*"},allowCredentials = "true")
 public class ActivityController {
@@ -25,6 +29,7 @@ public class ActivityController {
     @Autowired
     private Map<String, BaseActivityService> activityServiceMap;
 
+    @ApiOperation(value = "查看活动类型")
     @RequestMapping(value = "/test",method = {RequestMethod.GET})
     @ResponseBody
     public String test(){

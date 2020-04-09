@@ -3,6 +3,7 @@ package com.injian.controller;
 import com.injian.response.CommonReturnType;
 import com.injian.service.CategoryService;
 import com.injian.service.model.CategoryModel;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+@Api(tags = {"商品种类接口"})
 @Controller("category")
 @RequestMapping("/category")
 @CrossOrigin(origins = {"*"},allowCredentials = "true")

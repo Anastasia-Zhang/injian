@@ -6,6 +6,10 @@ import com.injian.response.CommonReturnType;
 import com.injian.service.CommentService;
 import com.injian.service.model.CommentModel;
 import com.injian.service.model.UserModel;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.BeanUtils;
@@ -15,13 +19,18 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Api(tags = {"商品评价接口"})
 @Controller("comment")
 @RequestMapping("/comment")
 @CrossOrigin(origins = {"*"},allowCredentials = "true")
 public class CommentController extends BaseController{
     @Autowired
     private CommentService commentService;
+
+    @ApiOperation(value = "查看某一商品的商品评价")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "商品Id", name = "itemId", dataType = "Integer")
+    })
     @RequestMapping(value = "/listComment",method = {RequestMethod.GET})
     @ResponseBody
     public CommonReturnType commentList(@RequestParam(name = "itemId") Integer itemId) throws BusinessException {
@@ -30,6 +39,11 @@ public class CommentController extends BaseController{
         return CommonReturnType.create(commentVOList);
     }
 
+    @ApiOperation(value = "查看回复")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "商品Id", name = "itemId", dataType = "Integer"),
+            @ApiImplicitParam(value = "评论Id", name = "commentId", dataType = "Integer")
+    })
     @RequestMapping(value = "/listReply",method = {RequestMethod.GET})
     @ResponseBody
     public CommonReturnType replyList(@RequestParam(name = "itemId") Integer itemId,
@@ -41,6 +55,11 @@ public class CommentController extends BaseController{
         return CommonReturnType.create(commentVOList);
     }
 
+    @ApiOperation(value = "添加评论")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "商品Id", name = "itemId", dataType = "Integer"),
+            @ApiImplicitParam(value = "评论内容", name = "content", dataType = "String")
+    })
     @RequestMapping(value = "/addComments",method = {RequestMethod.POST},consumes = {CONTENT_TYPE_FORMED})
     @ResponseBody
     public CommonReturnType addComment(@RequestParam(name = "itemId") Integer itemId,
@@ -56,6 +75,14 @@ public class CommentController extends BaseController{
         commentService.addComment(commentModel);
         return CommonReturnType.create(null);
     }
+
+    @ApiOperation(value = "添加回复")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "商品Id", name = "itemId", dataType = "Integer"),
+            @ApiImplicitParam(value = "回复内容", name = "content", dataType = "String"),
+            @ApiImplicitParam(value = "父节点Id", name = "parentId", dataType = "Integer"),
+            @ApiImplicitParam(value = "回复用户Id", name = "toUserId", dataType = "Integer")
+    })
     @RequestMapping(value = "/addReply",method = {RequestMethod.POST},consumes = {CONTENT_TYPE_FORMED})
     @ResponseBody
     public CommonReturnType addReply(@RequestParam(name = "itemId") Integer itemId,

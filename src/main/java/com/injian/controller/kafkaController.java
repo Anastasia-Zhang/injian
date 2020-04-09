@@ -1,6 +1,7 @@
 package com.injian.controller;
 
 import com.injian.kafka.KafkaProducer;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @date 2020/4/9 16:47
  */
 @Controller
+@Api(tags = {"Kafka消息队列接口"})
 public class kafkaController {
     @Autowired
     private KafkaProducer kafkaProducer;

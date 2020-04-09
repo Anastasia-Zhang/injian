@@ -6,6 +6,10 @@ import com.injian.error.BusinessException;
 import com.injian.response.CommonReturnType;
 import com.injian.service.ItemService;
 import com.injian.service.model.ItemModel;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Api(tags = {"商品接口"})
 @Controller("item")
 @RequestMapping("/item")
 @CrossOrigin(origins = {"*"},allowCredentials = "true")
@@ -25,6 +29,15 @@ public class ItemController extends BaseController {
     private ItemService itemService;
 
     //创建商品
+    @ApiOperation(value = "添加商品")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "商品名称", name = "title", dataType = "String"),
+            @ApiImplicitParam(value = "商品描述", name = "description", dataType = "String"),
+            @ApiImplicitParam(value = "价格", name = "price", dataType = "BigDecimal"),
+            @ApiImplicitParam(value = "库存", name = "stock", dataType = "Integer"),
+            @ApiImplicitParam(value = "商品图片Url", name = "imgUrl", dataType = "String"),
+            @ApiImplicitParam(value = "商品种类", name = "category", dataType = "Integer")
+    })
     @RequestMapping(value = "/create",method = {RequestMethod.POST},consumes = {CONTENT_TYPE_FORMED})
     @ResponseBody
     public CommonReturnType createItem(@RequestParam(name = "title") String title,
@@ -49,6 +62,10 @@ public class ItemController extends BaseController {
     }
 
     //商品详情页浏览
+    @ApiOperation(value = "查询商品详情")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "商品Id", name = "id", dataType = "Integer"),
+    })
     @RequestMapping(value = "/get",method = {RequestMethod.GET})
     @ResponseBody
     public CommonReturnType getItem(@RequestParam(name = "id") Integer id)
@@ -59,6 +76,10 @@ public class ItemController extends BaseController {
     }
 
     //商品列表浏览页面
+    @ApiOperation(value = "查询商品列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "类目Id", name = "categoryId", dataType = "Integer"),
+    })
     @RequestMapping(value = "/list",method = {RequestMethod.GET})
     @ResponseBody
     public CommonReturnType listItem(@RequestParam(name = "categoryId") Integer categoryId){
@@ -67,15 +88,23 @@ public class ItemController extends BaseController {
         List<ItemVO> itemVOList = this.convertVOListFromModel(itemModelList);
         return CommonReturnType.create(itemVOList);
     }
+
     //搜索商品
+    @ApiOperation(value = "搜索商品")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "关键字", name = "keyWord", dataType = "String"),
+    })
     @RequestMapping(value = "/search",method = {RequestMethod.GET})
     @ResponseBody
-    public CommonReturnType searchItem(@RequestParam(name = "keyWord")String keyWord){
+    public CommonReturnType searchItem(@RequestParam(name = "keyWord" )String keyWord){
+        System.out.println(keyWord);
         List<ItemModel> itemModelList = itemService.searchItem(keyWord);
         List<ItemVO> itemVOList = this.convertVOListFromModel(itemModelList);
+        System.out.println(itemVOList.size());
         return CommonReturnType.create(itemVOList);
     }
     //活动商品
+    @ApiOperation(value = "活动商品展示")
     @RequestMapping(value = "/promo",method = {RequestMethod.GET})
     @ResponseBody
     public CommonReturnType promoItem(){

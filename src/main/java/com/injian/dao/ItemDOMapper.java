@@ -56,7 +56,7 @@ public interface ItemDOMapper {
      */
     int updateByPrimaryKey(ItemDO record);
     List<ItemDO> listItem(@Param("categoryId") Integer categoryId);
-    List<ItemDO> selectByKeyword(@Param("keyword")String keyword);
+    List<ItemDO> selectByKeyword(@Param("keyWord")String keyWord);
     List<ItemDO> promoItem();
 
     int increaseSales(@Param("id")Integer id,@Param("amount") Integer amount);

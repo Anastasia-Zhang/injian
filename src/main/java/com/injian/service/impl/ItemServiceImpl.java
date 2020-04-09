@@ -87,6 +87,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemModel> searchItem(String keyword) {
         List<ItemDO> itemDOList = itemDOMapper.selectByKeyword(keyword);
+        System.out.println("daosize" + itemDOList.size());
         return this.convertModelListFromDO(itemDOList);
     }
 

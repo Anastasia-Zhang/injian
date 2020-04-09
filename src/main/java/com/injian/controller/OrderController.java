@@ -14,6 +14,7 @@ import com.injian.service.OrderService;
 import com.injian.service.model.OrderModel;
 import com.injian.service.model.ShopCarModel;
 import com.injian.service.model.UserModel;
+import io.swagger.annotations.Api;
 import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Api(tags = {"订单接口"})
 @Controller("order")
 @RequestMapping("/order")
 @CrossOrigin(origins = {"*"},allowCredentials = "true")

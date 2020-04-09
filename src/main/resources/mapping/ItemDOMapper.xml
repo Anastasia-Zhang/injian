@@ -163,13 +163,17 @@
   </update>
 
   <select id="selectByKeyword" parameterType="java.lang.String" resultMap="BaseResultMap">
-    SELECT
-    *
-    FROM
-    item
-    WHERE 1=1
-    <if test="keyword != null and keyword!=''">
-      <bind name="pattern" value="'%' + keyword + '%'" ></bind>
+<!--    <if test="keyWord != null and keyWord!=''">-->
+<!--      <bind name="pattern" value="'%' + keyWord + '%'" ></bind>-->
+
+
+<!--    </if>-->
+    select
+    <include refid="Base_Column_List" />
+    from item
+    where 1=1
+    <if test="keyWord != null and keyWord !=''">
+      <bind name="pattern" value="'%'+ keyWord + '%'" ></bind>
       and  title LIKE #{pattern}
     </if>
   </select>
